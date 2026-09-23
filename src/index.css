@@ -1,10 +1,18 @@
-body {
+html, body {
   font-family: 'Plus Jakarta Sans', sans-serif;
-  overflow-x: hidden;
+  overflow-x: hidden; /* Mencegah layar bergeser ke kiri/kanan di HP */
+  width: 100vw;
+  max-width: 100%;
   background: linear-gradient(-45deg, #0f172a, #1e1b4b, #064e3b, #0c4a6e);
   background-size: 400% 400%;
   animation: gradientBG 15s ease infinite;
   color: #f8fafc;
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 @keyframes gradientBG {
@@ -17,8 +25,8 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   z-index: -1;
 }
 
@@ -53,11 +61,11 @@ body {
   min-height: 100vh;
   display: flex;
   align-items: center;
-  padding-top: 100px;
+  padding-top: 120px;
 }
 
 .hero-title {
-  font-size: clamp(3rem, 5vw, 4.5rem);
+  font-size: clamp(2.8rem, 6vw, 4.5rem);
   line-height: 1.1;
   letter-spacing: -1px;
 }
@@ -70,7 +78,7 @@ body {
   justify-content: center;
   align-items: flex-start;
   width: 100%;
-  height: 520px;
+  height: 550px;
   position: relative;
   perspective: 1000px;
   animation: dropDown 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
@@ -92,6 +100,7 @@ body {
   margin-top: 80px;
   position: relative;
   z-index: 2;
+  touch-action: none; /* Penting untuk HP agar tidak zoom/scroll ganda */
 }
 
 .cocard-wrapper:active { cursor: grabbing; }
@@ -208,7 +217,6 @@ body {
   50% { transform: rotate(-4deg); }
   100% { transform: rotate(4deg); }
 }
-
 @keyframes shine {
   0% { left: -100%; }
   20% { left: 200%; }
@@ -289,7 +297,6 @@ body {
   gap: 1.5rem;
   grid-auto-rows: 260px;
 }
-
 .bento-item {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(10px);
@@ -305,7 +312,6 @@ body {
   text-decoration: none;
   color: inherit;
 }
-
 .bento-img {
   position: absolute;
   top: 0; left: 0; width: 100%; height: 100%;
@@ -314,18 +320,13 @@ body {
   transition: transform 0.5s ease;
   opacity: 0.6; 
 }
-
 .bento-item:hover {
   transform: translateY(-8px) scale(1.02);
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(0, 242, 254, 0.5);
   box-shadow: 0 15px 35px rgba(0,0,0,0.3);
 }
-
-.bento-item:hover .bento-img {
-  transform: scale(1.1);
-}
-
+.bento-item:hover .bento-img { transform: scale(1.1); }
 .bento-item::before {
   content: '';
   position: absolute;
@@ -333,7 +334,6 @@ body {
   background: linear-gradient(180deg, transparent 20%, rgba(15, 23, 42, 0.95) 100%);
   z-index: 1; 
 }
-
 .bento-content, .bento-tag { z-index: 2; position: relative; }
 .bento-tag {
   align-self: flex-start;
@@ -345,7 +345,6 @@ body {
   color: #0f172a;
   margin-bottom: auto;
 }
-
 @media (min-width: 768px) {
   .bento-large { grid-column: span 2; grid-row: span 2; }
   .bento-wide { grid-column: span 2; }
@@ -423,7 +422,6 @@ body {
 .slider-btn.prev { left: 15px; }
 .slider-btn.next { right: 15px; }
 
-/* Social Icons */
 .social-icon {
   font-size: 1.5rem;
   width: 55px;
@@ -445,22 +443,15 @@ body {
 }
 
 /* -------------------------------------------
-   RESPONSIVE & MEDIA QUERIES (NEW)
+   RESPONSIVE & MEDIA QUERIES
 ---------------------------------------------*/
 @media (max-width: 991px) {
   .hero-section {
     padding-top: 100px;
     padding-bottom: 50px;
   }
-  .hero-title {
-    font-size: clamp(2.5rem, 8vw, 3.5rem);
-    margin-top: 1rem;
-  }
   .cocard-container {
-    height: 420px; 
-  }
-  .cocard-wrapper {
-    margin-top: 40px;
+    height: 480px; 
   }
   .skill-list-card {
     padding: 2rem;
@@ -468,11 +459,17 @@ body {
 }
 
 @media (max-width: 576px) {
+  .hero-section {
+    padding-top: 80px;
+  }
+  .hero-title {
+    font-size: clamp(2.5rem, 9vw, 3rem);
+  }
   .cocard-container {
-    height: 380px;
+    height: 450px;
   }
   .cocard-wrapper {
-    margin-top: 20px;
+    margin-top: 40px;
   }
   .bento-grid {
     grid-auto-rows: 230px;

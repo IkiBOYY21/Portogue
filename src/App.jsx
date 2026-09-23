@@ -30,7 +30,13 @@ const App = () => {
     };
 
     const handleMouseMove = (e) => handleMove(e.clientX, e.clientY);
-    const handleTouchMove = (e) => handleMove(e.touches[0].clientX, e.touches[0].clientY);
+    
+    // Memperbaiki pergerakan di HP agar layar tidak ikut ke-scroll saat menarik cocard
+    const handleTouchMove = (e) => {
+      if (!isDragging) return;
+      e.preventDefault(); 
+      handleMove(e.touches[0].clientX, e.touches[0].clientY);
+    };
 
     const handleEnd = () => {
       if (isDragging) {
@@ -69,7 +75,6 @@ const App = () => {
     const slideInterval = setInterval(nextSlide, 4000);
     return () => clearInterval(slideInterval);
   }, []);
-
 
   // --- LOGIKA BACKGROUND CANVAS ---
   useEffect(() => {
@@ -157,37 +162,38 @@ const App = () => {
         </div>
       </nav>
 
-      {/* Hero Section - Updated Responsive Layout */}
+      {/* Hero Section */}
       <section id="home" className="hero-section container">
-        {/* flex-column-reverse makes the Cocard render on top of the text on mobile devices */}
-        <div className="row align-items-center w-100 justify-content-between flex-column-reverse flex-lg-row">
+        {/* flex-column-reverse agar Co-card muncul di bagian ATAS pada mode HP */}
+        <div className="row m-0 align-items-center w-100 justify-content-center justify-content-lg-between flex-column-reverse flex-lg-row">
           
-          {/* Bagian Kiri (Teks) */}
-          <div className="col-lg-6 mb-5 mb-lg-0 z-3 text-center text-lg-start mt-4 mt-lg-0">
-            <div className="d-inline-block border border-info border-opacity-25 rounded-pill px-3 py-2 mb-4 glass mx-auto mx-lg-0">
+          {/* Bagian Kiri (Teks) - Rata tengah di HP, rata kiri di Laptop */}
+          <div className="col-12 col-lg-6 mb-5 mb-lg-0 z-3 text-center text-lg-start d-flex flex-column align-items-center align-items-lg-start">
+            
+            <div className="d-inline-block border border-info border-opacity-25 rounded-pill px-3 py-2 mb-4 glass">
               <span className="text-light opacity-75">📍 Universitas Negeri Semarang '24</span>
             </div>
             
-            <h1 className="hero-title fw-bold mb-3">
+            <h1 className="hero-title fw-bold mb-3 w-100">
               Kreativitas <br/> Bertemu dengan <br/>
               <span className="gradient-text">Logika.</span>
             </h1>
             
-            <h4 className="text-light opacity-75 mb-4 fw-light lh-base mx-auto mx-lg-0" style={{maxWidth: '450px'}}>
+            <h4 className="text-light opacity-75 mb-4 fw-light lh-base w-100" style={{maxWidth: '450px'}}>
               Halo, saya <strong>Herdi Rizky</strong>. Mahasiswa Sistem Informasi dan anggota BP2M Unnes yang fokus pada UI/UX Design dan Web Development.
             </h4>
             
-            {/* Tombol responsif: Menumpuk vertikal di layar yang sangat kecil */}
-            <div className="d-flex flex-column flex-sm-row justify-content-center justify-content-lg-start gap-3 mt-4">
+            <div className="d-flex flex-column flex-sm-row gap-3 mt-2 w-100 justify-content-center justify-content-lg-start">
               <a href="#projects" className="btn px-4 py-3 rounded-pill fw-bold shadow-sm" style={{backgroundColor: '#00f2fe', color: '#0f172a'}}>Lihat Proyek</a>
               <a href="#contact" className="btn btn-outline-light px-4 py-3 rounded-pill glass fw-bold">Mari Berkolaborasi</a>
             </div>
           </div>
           
-          {/* Bagian Kanan - CO-CARD (Berada di atas saat mode HP) */}
-          <div className="col-lg-5 position-relative z-1 mb-4 mb-lg-0">
-            <div className="cocard-container">
-              <svg style={{ position: 'absolute', top: '80px', left: '50%', transform: 'translateX(-50%)', width: '200px', height: '100%', overflow: 'visible', zIndex: 1, pointerEvents: 'none' }}>
+          {/* Bagian Kanan - CO-CARD & TALI (SVG) */}
+          <div className="col-12 col-lg-5 position-relative z-1 mb-5 mb-lg-0 d-flex justify-content-center">
+            <div className="cocard-container w-100">
+              
+              <svg style={{ position: 'absolute', top: '0px', left: '50%', transform: 'translateX(-50%)', width: '200px', height: '100%', overflow: 'visible', zIndex: 1, pointerEvents: 'none' }}>
                 <g transform="translate(100, 0)">
                   <defs>
                      <pattern id="lanyard-pattern" width="40" height="40" patternUnits="userSpaceOnUse" patternTransform="rotate(15)">
@@ -201,8 +207,8 @@ const App = () => {
                      </radialGradient>
                   </defs>
                   
-                  <path d={`M 0 -1500 Q ${cocardPos.x * 0.4} ${cocardPos.y - 400} ${cocardPos.x} ${cocardPos.y}`} stroke="url(#lanyard-pattern)" strokeWidth="38" fill="none" strokeLinecap="square" />
-                  <circle cx={cocardPos.x} cy={cocardPos.y - 25} r="7" fill="url(#rivet-grad)" stroke="#020617" strokeWidth="1.5" />
+                  <path d={`M 0 -1500 Q ${cocardPos.x * 0.4} ${cocardPos.y - 400} ${cocardPos.x} ${cocardPos.y + 80}`} stroke="url(#lanyard-pattern)" strokeWidth="38" fill="none" strokeLinecap="square" />
+                  <circle cx={cocardPos.x} cy={cocardPos.y + 55} r="7" fill="url(#rivet-grad)" stroke="#020617" strokeWidth="1.5" />
                 </g>
               </svg>
 
@@ -217,24 +223,25 @@ const App = () => {
                 
                 <div className="cocard-body">
                   <div className="cocard-header">Crew / Panitia</div>
-                  <img src="/FOTO-PROFIL-ANDA.jpg" alt="Foto Herdi" className="cocard-photo" />
+                  <img src="/profil-herdi.jpeg" alt="Foto Herdi" className="cocard-photo" />
                   <h3 className="cocard-name">Herdi Rizky G.</h3>
                   <p className="cocard-role">UI/UX & Web Dev</p>
                   <div className="cocard-barcode"></div>
                 </div>
               </div>
+
             </div>
           </div>
 
         </div>
       </section>
 
-      {/* Tech Stack & Logos */}
+      {/* Bagian Keahlian & Teknologi */}
       <section id="skills" className="container pt-5 mt-5 z-1 position-relative">
         <p className="text-center text-uppercase tracking-widest fw-bold mb-5" style={{color: '#4facfe'}}>Teknologi & Tools</p>
         
-        <div className="row g-5 mb-5">
-          <div className="col-md-6">
+        <div className="row m-0 g-5 mb-5 w-100">
+          <div className="col-12 col-md-6 px-0 px-md-3">
             <h4 className="text-center fw-bold mb-4" style={{color: '#cbd5e1'}}>Bahasa Pemrograman</h4>
             <div className="d-flex flex-wrap justify-content-center gap-2">
               <span className="skill-pill"><i className="fab fa-js skill-icon" style={{color: '#f7df1e'}}></i> JavaScript</span>
@@ -245,7 +252,7 @@ const App = () => {
             </div>
           </div>
 
-          <div className="col-md-6">
+          <div className="col-12 col-md-6 px-0 px-md-3 mt-5 mt-md-0">
             <h4 className="text-center fw-bold mb-4" style={{color: '#cbd5e1'}}>Tools & Aplikasi</h4>
             <div className="d-flex flex-wrap justify-content-center gap-2">
               <span className="skill-pill"><i className="fas fa-palette skill-icon" style={{color: '#00c4cc'}}></i> Canva</span>
@@ -257,9 +264,8 @@ const App = () => {
           </div>
         </div>
 
-        {/* Hard Skill & Soft Skill */}
-        <div className="row g-4 mt-2">
-          <div className="col-lg-6">
+        <div className="row m-0 g-4 mt-2 w-100">
+          <div className="col-12 col-lg-6 px-0 px-lg-2">
             <div className="skill-list-card">
               <h4 className="fw-bold mb-4"><i className="fas fa-laptop-code me-2" style={{color: '#00f2fe'}}></i> Kapabilitas Teknis</h4>
               <div className="skill-item">
@@ -281,7 +287,7 @@ const App = () => {
             </div>
           </div>
 
-          <div className="col-lg-6">
+          <div className="col-12 col-lg-6 px-0 px-lg-2">
             <div className="skill-list-card">
               <h4 className="fw-bold mb-4"><i className="fas fa-user-tie me-2" style={{color: '#00f2fe'}}></i> Kapabilitas Personal</h4>
               <div className="skill-item">
@@ -305,12 +311,11 @@ const App = () => {
         </div>
       </section>
 
-      {/* Projects */}
+      {/* Bagian Proyek */}
       <section id="projects" className="container py-5 my-5">
         <h2 className="display-5 fw-bold mb-5 text-center">Proyek <span className="gradient-text">Pilihan</span></h2>
         
-        <div className="bento-grid">
-          
+        <div className="bento-grid px-3 px-md-0">
           <div className="bento-item bento-large">
             <img src="/GAMBAR-PROYEK-1-UMKM.jpg" alt="Proyek 1" className="bento-img" />
             <span className="bento-tag">UI/UX Design</span>
@@ -346,18 +351,16 @@ const App = () => {
                 <p className="opacity-75 mb-0">Pengembangan website portofolio interaktif dengan animasi HTML5 Canvas dan arsitektur komponen React yang responsif.</p>
              </div>
           </div>
-
         </div>
       </section>
 
-      {/* SERTIFIKAT & KEGIATAN ORGANISASI */}
+      {/* Bagian Sertifikat & Organisasi */}
       <section id="experience" className="container py-5 my-5">
-        <div className="row g-5 align-items-start">
+        <div className="row m-0 w-100 g-5 align-items-start">
           
-          <div className="col-lg-4 z-1">
-            <h3 className="fw-bold mb-4" style={{color: '#4facfe'}}><i className="fas fa-award me-2"></i> Sertifikat</h3>
-            <div className="d-flex flex-column gap-3">
-              
+          <div className="col-12 col-lg-4 px-0 px-lg-3 z-1">
+            <h3 className="fw-bold mb-4 text-center text-lg-start" style={{color: '#4facfe'}}><i className="fas fa-award me-2"></i> Sertifikat</h3>
+            <div className="d-flex flex-column gap-3 px-3 px-lg-0">
               <a href="/FILE-SERTIFIKAT-CTF.pdf" target="_blank" rel="noreferrer" className="cert-card glass p-3 rounded-4 border-start border-4">
                 <img src="/THUMBNAIL-SERTIFIKAT-CTF.jpg" alt="Sertifikat CTF" className="cert-thumb" />
                 <div>
@@ -365,7 +368,6 @@ const App = () => {
                   <p className="text-secondary small mb-0">Tahun 2026</p>
                 </div>
               </a>
-
               <a href="/FILE-SERTIFIKAT-GEMASTIK.pdf" target="_blank" rel="noreferrer" className="cert-card glass p-3 rounded-4 border-start border-4">
                 <img src="/THUMBNAIL-SERTIFIKAT-GEMASTIK.jpg" alt="Sertifikat GEMASTIK" className="cert-thumb" />
                 <div>
@@ -373,7 +375,6 @@ const App = () => {
                   <p className="text-secondary small mb-0">Tahun 2025</p>
                 </div>
               </a>
-
               <a href="/FILE-SERTIFIKAT-WEB.pdf" target="_blank" rel="noreferrer" className="cert-card glass p-3 rounded-4 border-start border-4">
                 <img src="/THUMBNAIL-SERTIFIKAT-WEB.jpg" alt="Sertifikat Web Dev" className="cert-thumb" />
                 <div>
@@ -384,13 +385,13 @@ const App = () => {
             </div>
           </div>
 
-          <div className="col-lg-8 z-1">
-            <div className="d-flex justify-content-between align-items-end mb-4">
+          <div className="col-12 col-lg-8 px-0 px-lg-3 mt-5 mt-lg-0 z-1">
+            <div className="d-flex justify-content-between align-items-end mb-4 px-3 px-lg-0">
               <h3 className="fw-bold mb-0" style={{color: '#4facfe'}}><i className="fas fa-users me-2"></i> Organisasi</h3>
               <span className="badge glass text-light opacity-75">BP2M Unnes</span>
             </div>
             
-            <div className="slider-container">
+            <div className="slider-container mx-3 mx-lg-0">
               <button className="slider-btn prev" onClick={prevSlide}><i className="fas fa-chevron-left"></i></button>
               <button className="slider-btn next" onClick={nextSlide}><i className="fas fa-chevron-right"></i></button>
 
@@ -404,16 +405,15 @@ const App = () => {
                 </div>
               ))}
             </div>
-
           </div>
         </div>
       </section>
 
-      {/* Contact Section */}
+      {/* Bagian Kontak */}
       <section id="contact" className="container py-5 my-5">
-        <div className="glass p-5 rounded-5 border-0 shadow-lg col-lg-10 mx-auto text-center" style={{background: 'linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(0,242,254,0.08) 100%)'}}>
+        <div className="glass p-4 p-md-5 mx-3 mx-md-auto rounded-5 border-0 shadow-lg col-lg-10 text-center" style={{background: 'linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(0,242,254,0.08) 100%)'}}>
           <h2 className="display-5 fw-bold mb-3">Punya Ide Proyek?</h2>
-          <p className="lead opacity-75 mb-5 mx-auto" style={{maxWidth: '600px'}}>
+          <p className="lead opacity-75 mb-5 mx-auto fs-6 fs-md-5" style={{maxWidth: '600px'}}>
             Saya selalu terbuka untuk mendiskusikan peluang kolaborasi, proyek pengembangan web, atau sekadar bertukar pikiran mengenai UI/UX.
           </p>
           <div className="d-flex justify-content-center gap-3 flex-wrap">
