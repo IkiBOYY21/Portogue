@@ -157,11 +157,14 @@ const App = () => {
         </div>
       </nav>
 
-      {/* Hero Section */}
+      {/* Hero Section - Updated Responsive Layout */}
       <section id="home" className="hero-section container">
-        <div className="row align-items-center w-100 justify-content-between">
-          <div className="col-lg-6 mb-5 mb-lg-0 z-2">
-            <div className="d-inline-block border border-info border-opacity-25 rounded-pill px-3 py-2 mb-4 glass">
+        {/* flex-column-reverse makes the Cocard render on top of the text on mobile devices */}
+        <div className="row align-items-center w-100 justify-content-between flex-column-reverse flex-lg-row">
+          
+          {/* Bagian Kiri (Teks) */}
+          <div className="col-lg-6 mb-5 mb-lg-0 z-3 text-center text-lg-start mt-4 mt-lg-0">
+            <div className="d-inline-block border border-info border-opacity-25 rounded-pill px-3 py-2 mb-4 glass mx-auto mx-lg-0">
               <span className="text-light opacity-75">📍 Universitas Negeri Semarang '24</span>
             </div>
             
@@ -170,17 +173,19 @@ const App = () => {
               <span className="gradient-text">Logika.</span>
             </h1>
             
-            <h4 className="text-light opacity-75 mb-4 fw-light lh-base" style={{maxWidth: '450px'}}>
+            <h4 className="text-light opacity-75 mb-4 fw-light lh-base mx-auto mx-lg-0" style={{maxWidth: '450px'}}>
               Halo, saya <strong>Herdi Rizky</strong>. Mahasiswa Sistem Informasi dan anggota BP2M Unnes yang fokus pada UI/UX Design dan Web Development.
             </h4>
             
-            <div className="d-flex gap-3">
+            {/* Tombol responsif: Menumpuk vertikal di layar yang sangat kecil */}
+            <div className="d-flex flex-column flex-sm-row justify-content-center justify-content-lg-start gap-3 mt-4">
               <a href="#projects" className="btn px-4 py-3 rounded-pill fw-bold shadow-sm" style={{backgroundColor: '#00f2fe', color: '#0f172a'}}>Lihat Proyek</a>
               <a href="#contact" className="btn btn-outline-light px-4 py-3 rounded-pill glass fw-bold">Mari Berkolaborasi</a>
             </div>
           </div>
           
-          <div className="col-lg-5 position-relative z-2">
+          {/* Bagian Kanan - CO-CARD (Berada di atas saat mode HP) */}
+          <div className="col-lg-5 position-relative z-1 mb-4 mb-lg-0">
             <div className="cocard-container">
               <svg style={{ position: 'absolute', top: '80px', left: '50%', transform: 'translateX(-50%)', width: '200px', height: '100%', overflow: 'visible', zIndex: 1, pointerEvents: 'none' }}>
                 <g transform="translate(100, 0)">
@@ -212,10 +217,7 @@ const App = () => {
                 
                 <div className="cocard-body">
                   <div className="cocard-header">Crew / Panitia</div>
-                  
-                  {/* FOTO PROFIL ANDA */}
                   <img src="/FOTO-PROFIL-ANDA.jpg" alt="Foto Herdi" className="cocard-photo" />
-                  
                   <h3 className="cocard-name">Herdi Rizky G.</h3>
                   <p className="cocard-role">UI/UX & Web Dev</p>
                   <div className="cocard-barcode"></div>
@@ -223,6 +225,7 @@ const App = () => {
               </div>
             </div>
           </div>
+
         </div>
       </section>
 
@@ -309,7 +312,6 @@ const App = () => {
         <div className="bento-grid">
           
           <div className="bento-item bento-large">
-            {/* GAMBAR PROYEK 1 */}
             <img src="/GAMBAR-PROYEK-1-UMKM.jpg" alt="Proyek 1" className="bento-img" />
             <span className="bento-tag">UI/UX Design</span>
             <div className="bento-content mt-4">
@@ -319,7 +321,6 @@ const App = () => {
           </div>
 
           <div className="bento-item">
-            {/* GAMBAR PROYEK 2 */}
             <img src="/GAMBAR-PROYEK-2-MINISOCCER.jpg" alt="Proyek 2" className="bento-img" />
             <span className="bento-tag" style={{background: '#38bdf8'}}>Web Dev</span>
             <div className="bento-content mt-4">
@@ -329,7 +330,6 @@ const App = () => {
           </div>
 
           <div className="bento-item">
-            {/* GAMBAR PROYEK 3 */}
             <img src="/GAMBAR-PROYEK-3-MACHINELEARNING.jpg" alt="Proyek 3" className="bento-img" />
             <span className="bento-tag" style={{background: '#34d399'}}>Machine Learning</span>
             <div className="bento-content mt-4">
@@ -339,7 +339,6 @@ const App = () => {
           </div>
 
           <div className="bento-item bento-wide">
-             {/* GAMBAR PROYEK 4 */}
              <img src="/GAMBAR-PROYEK-4-PORTOGUE.jpg" alt="Proyek 4" className="bento-img" />
              <span className="bento-tag" style={{background: '#fbbf24'}}>Frontend</span>
              <div className="bento-content mt-4">
@@ -359,7 +358,6 @@ const App = () => {
             <h3 className="fw-bold mb-4" style={{color: '#4facfe'}}><i className="fas fa-award me-2"></i> Sertifikat</h3>
             <div className="d-flex flex-column gap-3">
               
-              {/* FILE & THUMBNAIL SERTIFIKAT 1 */}
               <a href="/FILE-SERTIFIKAT-CTF.pdf" target="_blank" rel="noreferrer" className="cert-card glass p-3 rounded-4 border-start border-4">
                 <img src="/THUMBNAIL-SERTIFIKAT-CTF.jpg" alt="Sertifikat CTF" className="cert-thumb" />
                 <div>
@@ -368,7 +366,6 @@ const App = () => {
                 </div>
               </a>
 
-              {/* FILE & THUMBNAIL SERTIFIKAT 2 */}
               <a href="/FILE-SERTIFIKAT-GEMASTIK.pdf" target="_blank" rel="noreferrer" className="cert-card glass p-3 rounded-4 border-start border-4">
                 <img src="/THUMBNAIL-SERTIFIKAT-GEMASTIK.jpg" alt="Sertifikat GEMASTIK" className="cert-thumb" />
                 <div>
@@ -377,7 +374,6 @@ const App = () => {
                 </div>
               </a>
 
-              {/* FILE & THUMBNAIL SERTIFIKAT 3 */}
               <a href="/FILE-SERTIFIKAT-WEB.pdf" target="_blank" rel="noreferrer" className="cert-card glass p-3 rounded-4 border-start border-4">
                 <img src="/THUMBNAIL-SERTIFIKAT-WEB.jpg" alt="Sertifikat Web Dev" className="cert-thumb" />
                 <div>
@@ -400,7 +396,6 @@ const App = () => {
 
               {orgSlides.map((slide, index) => (
                 <div key={slide.id} className={`slide-item ${index === currentSlide ? 'active' : ''}`}>
-                  {/* FOTO KEGIATAN ORGANISASI DISIAPKAN DARI ARRAY DI ATAS */}
                   <img src={slide.img} alt={slide.title} />
                   <div className="slide-overlay">
                     <h4 className="fw-bold mb-2">{slide.title}</h4>
