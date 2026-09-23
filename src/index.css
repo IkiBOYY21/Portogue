@@ -1,6 +1,6 @@
 html, body {
   font-family: 'Plus Jakarta Sans', sans-serif;
-  overflow-x: hidden; /* Mencegah layar bergeser ke kiri/kanan di HP */
+  overflow-x: hidden; 
   width: 100vw;
   max-width: 100%;
   background: linear-gradient(-45deg, #0f172a, #1e1b4b, #064e3b, #0c4a6e);
@@ -100,7 +100,7 @@ html, body {
   margin-top: 80px;
   position: relative;
   z-index: 2;
-  touch-action: none; /* Penting untuk HP agar tidak zoom/scroll ganda */
+  touch-action: none;
 }
 
 .cocard-wrapper:active { cursor: grabbing; }
@@ -295,7 +295,8 @@ html, body {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.5rem;
-  grid-auto-rows: 260px;
+  /* Dibuat elastis menyesuaikan isi konten */
+  grid-auto-rows: minmax(240px, auto); 
 }
 .bento-item {
   background: rgba(255, 255, 255, 0.03);
@@ -311,6 +312,7 @@ html, body {
   overflow: hidden;
   text-decoration: none;
   color: inherit;
+  text-align: left; /* Memaksa teks rata kiri dengan rapi */
 }
 .bento-img {
   position: absolute;
@@ -446,35 +448,24 @@ html, body {
    RESPONSIVE & MEDIA QUERIES
 ---------------------------------------------*/
 @media (max-width: 991px) {
-  .hero-section {
-    padding-top: 100px;
-    padding-bottom: 50px;
-  }
-  .cocard-container {
-    height: 480px; 
-  }
-  .skill-list-card {
-    padding: 2rem;
-  }
+  .hero-section { padding-top: 100px; padding-bottom: 50px; }
+  .cocard-container { height: 480px; }
+  .skill-list-card { padding: 2rem; }
 }
 
 @media (max-width: 576px) {
-  .hero-section {
-    padding-top: 80px;
+  .hero-section { padding-top: 80px; }
+  .hero-title { font-size: clamp(2.5rem, 9vw, 3rem); }
+  .cocard-container { height: 450px; }
+  .cocard-wrapper { margin-top: 40px; }
+  
+  /* Menyesuaikan grid agar pas di layar iPhone */
+  .bento-grid { 
+    grid-template-columns: 1fr;
+    grid-auto-rows: minmax(220px, auto); 
   }
-  .hero-title {
-    font-size: clamp(2.5rem, 9vw, 3rem);
+  .bento-item { 
+    padding: 1.5rem; /* Mengurangi padding agar teks punya ruang */
   }
-  .cocard-container {
-    height: 450px;
-  }
-  .cocard-wrapper {
-    margin-top: 40px;
-  }
-  .bento-grid {
-    grid-auto-rows: 230px;
-  }
-  .slide-overlay {
-    padding: 3rem 1.5rem 1.5rem;
-  }
+  .slide-overlay { padding: 3rem 1.5rem 1.5rem; }
 }

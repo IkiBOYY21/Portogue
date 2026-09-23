@@ -31,7 +31,7 @@ const App = () => {
 
     const handleMouseMove = (e) => handleMove(e.clientX, e.clientY);
     
-    // Memperbaiki pergerakan di HP agar layar tidak ikut ke-scroll saat menarik cocard
+    // Mencegah layar tertarik saat menggeser co-card
     const handleTouchMove = (e) => {
       if (!isDragging) return;
       e.preventDefault(); 
@@ -162,14 +162,10 @@ const App = () => {
         </div>
       </nav>
 
-      {/* Hero Section */}
       <section id="home" className="hero-section container">
-        {/* flex-column-reverse agar Co-card muncul di bagian ATAS pada mode HP */}
         <div className="row m-0 align-items-center w-100 justify-content-center justify-content-lg-between flex-column-reverse flex-lg-row">
           
-          {/* Bagian Kiri (Teks) - Rata tengah di HP, rata kiri di Laptop */}
           <div className="col-12 col-lg-6 mb-5 mb-lg-0 z-3 text-center text-lg-start d-flex flex-column align-items-center align-items-lg-start">
-            
             <div className="d-inline-block border border-info border-opacity-25 rounded-pill px-3 py-2 mb-4 glass">
               <span className="text-light opacity-75">📍 Universitas Negeri Semarang '24</span>
             </div>
@@ -189,7 +185,6 @@ const App = () => {
             </div>
           </div>
           
-          {/* Bagian Kanan - CO-CARD & TALI (SVG) */}
           <div className="col-12 col-lg-5 position-relative z-1 mb-5 mb-lg-0 d-flex justify-content-center">
             <div className="cocard-container w-100">
               
@@ -223,7 +218,7 @@ const App = () => {
                 
                 <div className="cocard-body">
                   <div className="cocard-header">Crew / Panitia</div>
-                  <img src="/profil-herdi.jpeg" alt="Foto Herdi" className="cocard-photo" />
+                  <img src="/FOTO-PROFIL-ANDA.jpg" alt="Foto Herdi" className="cocard-photo" />
                   <h3 className="cocard-name">Herdi Rizky G.</h3>
                   <p className="cocard-role">UI/UX & Web Dev</p>
                   <div className="cocard-barcode"></div>
@@ -236,7 +231,6 @@ const App = () => {
         </div>
       </section>
 
-      {/* Bagian Keahlian & Teknologi */}
       <section id="skills" className="container pt-5 mt-5 z-1 position-relative">
         <p className="text-center text-uppercase tracking-widest fw-bold mb-5" style={{color: '#4facfe'}}>Teknologi & Tools</p>
         
@@ -311,22 +305,23 @@ const App = () => {
         </div>
       </section>
 
-      {/* Bagian Proyek */}
       <section id="projects" className="container py-5 my-5">
         <h2 className="display-5 fw-bold mb-5 text-center">Proyek <span className="gradient-text">Pilihan</span></h2>
         
         <div className="bento-grid px-3 px-md-0">
+          
           <div className="bento-item bento-large">
-            <img src="/GAMBAR-PROYEK-1-UMKM.jpg" alt="Proyek 1" className="bento-img" />
+            {/* Trik menyembunyikan gambar jika error agar tidak merusak layout */}
+            <img src="/GAMBAR-PROYEK-1-UMKM.jpg" alt="Proyek 1" className="bento-img" onError={(e) => { e.target.style.display = 'none'; }} />
             <span className="bento-tag">UI/UX Design</span>
             <div className="bento-content mt-4">
-              <h3 className="fw-bold display-6">UMKM Boost</h3>
-              <p className="opacity-75 fs-5">Perancangan antarmuka aplikasi berbasis AI untuk membantu perencanaan konten digital bisnis skala kecil. Fokus pada alur pengguna yang intuitif.</p>
+              <h3 className="fw-bold fs-3">UMKM Boost</h3>
+              <p className="opacity-75 mb-0">Perancangan antarmuka aplikasi berbasis AI untuk membantu perencanaan konten digital bisnis skala kecil. Fokus pada alur pengguna yang intuitif.</p>
             </div>
           </div>
 
           <div className="bento-item">
-            <img src="/GAMBAR-PROYEK-2-MINISOCCER.jpg" alt="Proyek 2" className="bento-img" />
+            <img src="/GAMBAR-PROYEK-2-MINISOCCER.jpg" alt="Proyek 2" className="bento-img" onError={(e) => { e.target.style.display = 'none'; }} />
             <span className="bento-tag" style={{background: '#38bdf8'}}>Web Dev</span>
             <div className="bento-content mt-4">
               <h4 className="fw-bold">Booking Mini Soccer</h4>
@@ -335,7 +330,7 @@ const App = () => {
           </div>
 
           <div className="bento-item">
-            <img src="/GAMBAR-PROYEK-3-MACHINELEARNING.jpg" alt="Proyek 3" className="bento-img" />
+            <img src="/GAMBAR-PROYEK-3-MACHINELEARNING.jpg" alt="Proyek 3" className="bento-img" onError={(e) => { e.target.style.display = 'none'; }} />
             <span className="bento-tag" style={{background: '#34d399'}}>Machine Learning</span>
             <div className="bento-content mt-4">
               <h4 className="fw-bold">Anemia Risk Classification</h4>
@@ -344,7 +339,7 @@ const App = () => {
           </div>
 
           <div className="bento-item bento-wide">
-             <img src="/GAMBAR-PROYEK-4-PORTOGUE.jpg" alt="Proyek 4" className="bento-img" />
+             <img src="/GAMBAR-PROYEK-4-PORTOGUE.jpg" alt="Proyek 4" className="bento-img" onError={(e) => { e.target.style.display = 'none'; }} />
              <span className="bento-tag" style={{background: '#fbbf24'}}>Frontend</span>
              <div className="bento-content mt-4">
                 <h4 className="fw-bold">Portogue - Personal Web</h4>
@@ -354,7 +349,6 @@ const App = () => {
         </div>
       </section>
 
-      {/* Bagian Sertifikat & Organisasi */}
       <section id="experience" className="container py-5 my-5">
         <div className="row m-0 w-100 g-5 align-items-start">
           
@@ -409,7 +403,6 @@ const App = () => {
         </div>
       </section>
 
-      {/* Bagian Kontak */}
       <section id="contact" className="container py-5 my-5">
         <div className="glass p-4 p-md-5 mx-3 mx-md-auto rounded-5 border-0 shadow-lg col-lg-10 text-center" style={{background: 'linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(0,242,254,0.08) 100%)'}}>
           <h2 className="display-5 fw-bold mb-3">Punya Ide Proyek?</h2>
