@@ -3,6 +3,10 @@ import './index.css';
 
 const App = () => {
   const canvasRef = useRef(null);
+  
+  // State untuk kontrol Buka/Tutup Menu HP
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const toggleMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
   useEffect(() => {
     const reveals = document.querySelectorAll(".reveal, .reveal-left, .reveal-right");
@@ -88,51 +92,92 @@ const App = () => {
     return () => clearInterval(slideInterval);
   }, []);
 
-  // --- LOGIKA MOUSE GLOW ORANGE DENGAN BACKGROUND DARK SLATE ---
+  // --- LOGIKA MOUSE GLOW & GRADASI LATAR BELAKANG MENYALA ---
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     let animationFrameId;
     
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    window.addEventListener('resize', resize);
+    resize();
 
     let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-    let current = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+    
+    // Titik trail kursor
+    let trailPoints = [
+      { x: window.innerWidth / 2, y: window.innerHeight / 2, lerp: 0.1, r: 450 },
+      { x: window.innerWidth / 2, y: window.innerHeight / 2, lerp: 0.05, r: 400 },
+      { x: window.innerWidth / 2, y: window.innerHeight / 2, lerp: 0.02, r: 350 }
+    ];
+
+    let time = 0;
 
     const handleMouseMove = (e) => { 
       mouse.x = e.clientX; 
       mouse.y = e.clientY; 
     };
-
     window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('resize', () => { 
-      canvas.width = window.innerWidth; 
-      canvas.height = window.innerHeight; 
-    });
 
     const animate = () => {
+      time += 0.003;
       animationFrameId = requestAnimationFrame(animate);
       
-      // Warna dasar menyesuaikan referensi gambar Anda (Dark Gray / Charcoal)
-      ctx.fillStyle = '#1b1d22'; 
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#0f1013'; 
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      current.x += (mouse.x - current.x) * 0.05;
-      current.y += (mouse.y - current.y) * 0.05;
+      ctx.globalCompositeOperation = 'screen'; 
 
-      // Glow cahaya mengikuti kursor
-      const gradient = ctx.createRadialGradient(current.x, current.y, 0, current.x, current.y, 600);
-      gradient.addColorStop(0, 'rgba(255, 87, 34, 0.12)'); 
-      gradient.addColorStop(1, 'rgba(27, 29, 34, 0)');     
+      // Gradasi raksasa yang menyala
+      const orbs = [
+        { x: canvas.width * 0.2 + Math.sin(time) * 150, y: canvas.height * 0.3 + Math.cos(time * 0.8) * 100, r: 1400, color: 'rgba(255, 87, 34, 0.35)' }, 
+        { x: canvas.width * 0.8 + Math.cos(time * 1.2) * 200, y: canvas.height * 0.7 + Math.sin(time * 0.9) * 150, r: 1100, color: 'rgba(255, 138, 101, 0.20)' },
+        { x: canvas.width * 0.5 + Math.sin(time * 0.7) * 300, y: canvas.height * 0.5 + Math.cos(time * 1.1) * 200, r: 1000, color: 'rgba(230, 74, 25, 0.15)' }
+      ];
 
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      orbs.forEach(orb => {
+        const bgGradient = ctx.createRadialGradient(orb.x, orb.y, 0, orb.x, orb.y, orb.r);
+        bgGradient.addColorStop(0, orb.color);
+        bgGradient.addColorStop(1, 'rgba(15, 16, 19, 0)');
+
+        ctx.fillStyle = bgGradient;
+        ctx.beginPath();
+        ctx.arc(orb.x, orb.y, orb.r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Mouse Trail
+      trailPoints.forEach((p, index) => {
+        let targetX = index === 0 ? mouse.x : trailPoints[index - 1].x;
+        let targetY = index === 0 ? mouse.y : trailPoints[index - 1].y;
+
+        p.x += (targetX - p.x) * p.lerp;
+        p.y += (targetY - p.y) * p.lerp;
+
+        const trailGradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
+        const opacity = 0.2 - (index * 0.05); 
+        
+        trailGradient.addColorStop(0, `rgba(255, 87, 34, ${opacity})`); 
+        trailGradient.addColorStop(1, 'rgba(15, 16, 19, 0)');     
+
+        ctx.fillStyle = trailGradient;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      ctx.globalCompositeOperation = 'source-over';
     };
 
     animate();
+    
     return () => { 
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('resize', resize);
       cancelAnimationFrame(animationFrameId); 
     };
   }, []);
@@ -144,13 +189,36 @@ const App = () => {
       <nav className="navbar navbar-expand-lg navbar-dark fixed-top glass-nav py-3">
         <div className="container">
           <a className="navbar-brand fw-bold fs-4" href="#">Portogue<span style={{color: '#FF5722'}}>.</span></a>
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav ms-auto gap-4">
-              <li className="nav-item"><a className="nav-link text-light opacity-75" href="#home">Beranda</a></li>
-              <li className="nav-item"><a className="nav-link text-light opacity-75" href="#skills">Keahlian</a></li>
-              <li className="nav-item"><a className="nav-link text-light opacity-75" href="#projects">Karya</a></li>
-              <li className="nav-item"><a className="nav-link text-light opacity-75" href="#experience">Pengalaman</a></li>
+          
+          <button 
+            className="navbar-toggler" 
+            type="button" 
+            onClick={toggleMenu}
+            aria-expanded={isMobileMenuOpen}
+            aria-label="Toggle navigation"
+          >
+            <span className="navbar-toggler-icon"></span>
+          </button>
+
+          <div className={`collapse navbar-collapse d-lg-flex ${isMobileMenuOpen ? 'show' : ''}`}>
+            
+            <ul className="navbar-nav ms-auto mb-auto mb-lg-0 gap-3 gap-lg-4 mt-4 mt-lg-0">
+              <li className="nav-item"><a className="nav-link text-light opacity-75" href="#home" onClick={() => setIsMobileMenuOpen(false)}>Beranda</a></li>
+              <li className="nav-item"><a className="nav-link text-light opacity-75" href="#skills" onClick={() => setIsMobileMenuOpen(false)}>Keahlian</a></li>
+              <li className="nav-item"><a className="nav-link text-light opacity-75" href="#projects" onClick={() => setIsMobileMenuOpen(false)}>Karya</a></li>
+              <li className="nav-item"><a className="nav-link text-light opacity-75" href="#experience" onClick={() => setIsMobileMenuOpen(false)}>Pengalaman</a></li>
             </ul>
+
+            <div className="mobile-contact-container d-lg-none mt-auto pt-4 pb-3 w-100 text-center">
+              <p className="opacity-75 small mb-3 fw-bold letter-spacing-1">HUBUNGI SAYA</p>
+              <div className="d-flex justify-content-center gap-4">
+                <a href="https://www.instagram.com/herdirzky" target="_blank" rel="noreferrer" className="mobile-social-icon"><i className="fab fa-instagram"></i></a>
+                <a href="https://www.linkedin.com/in/herdi-rizky" target="_blank" rel="noreferrer" className="mobile-social-icon"><i className="fab fa-linkedin-in"></i></a>
+                <a href="https://github.com/IkiBOYY21" target="_blank" rel="noreferrer" className="mobile-social-icon"><i className="fab fa-github"></i></a>
+                <a href="https://wa.me/6281284180949" target="_blank" rel="noreferrer" className="mobile-social-icon"><i className="fab fa-whatsapp"></i></a>
+              </div>
+            </div>
+
           </div>
         </div>
       </nav>
@@ -159,24 +227,22 @@ const App = () => {
         <div className="row align-items-center justify-content-between flex-column-reverse flex-lg-row w-100 mx-0">
           
           <div className="col-12 col-lg-7 mb-5 mb-lg-0 z-3 text-center text-lg-start d-flex flex-column align-items-center align-items-lg-start reveal-left pe-lg-4">
-            {/* Lokasi Badge */}
             <div className="d-inline-block rounded-pill px-4 py-2 mb-4" style={{border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.03)'}}>
               <span className="text-light opacity-75 small"><i className="fas fa-map-marker-alt me-2" style={{color: '#FF5722'}}></i>Universitas Negeri Semarang '24</span>
             </div>
             
-            {/* Teks persis seperti gambar */}
             <h1 className="hero-title fw-bold mb-4 text-white">
-              Kreativitas Bertemu <br className="d-none d-md-block" /> dengan <span style={{color: '#FF5722'}}>Logika.</span>
+              Merancang Antarmuka yang Hidup, <br className="d-none d-md-block" /> Membangun Web yang <span style={{color: '#FF5722'}}>Tangguh.</span>
             </h1>
             
             <p className="text-light opacity-75 mb-5 fw-light lh-lg fs-5" style={{maxWidth: '650px'}}>
               Halo, saya <strong>Herdi Rizky</strong>. Mahasiswa Sistem Informasi di UNNES sekaligus penggiat UI/UX Design dan Web Development yang berfokus menciptakan pengalaman digital yang intuitif dan berdampak nyata.
             </p>
             
-            {/* Tombol sesuai gambar referensi */}
+            {/* Terapkan Class Baru pada Tombol di sini */}
             <div className="d-flex flex-column flex-sm-row gap-3 mt-2 justify-content-center justify-content-lg-start">
-              <a href="#projects" className="btn px-4 py-3 rounded-pill fw-bold shadow-sm" style={{backgroundColor: '#FF5722', color: '#ffffff', border: 'none'}}>Lihat Proyek</a>
-              <a href="#contact" className="btn px-4 py-3 rounded-pill fw-bold" style={{color: '#FF8A65', border: '1px solid rgba(255, 138, 101, 0.4)', backgroundColor: 'transparent'}}>Mari Berkolaborasi</a>
+              <a href="#projects" className="btn px-4 py-3 rounded-pill fw-bold btn-primary-glow">Lihat Proyek</a>
+              <a href="#contact" className="btn px-4 py-3 rounded-pill fw-bold btn-outline-glow">Mari Berkolaborasi</a>
             </div>
           </div>
           
@@ -227,7 +293,8 @@ const App = () => {
       </section>
 
       <section id="skills" className="container pt-5 mt-5 z-1 position-relative">
-        <p className="text-center text-uppercase fw-bold mb-5 reveal" style={{color: '#FF5722', letterSpacing: '2px'}}>Teknologi & Tools</p>
+        {/* Terapkan Class section-subtitle di sini agar membesar & menyala */}
+        <p className="text-center mb-5 reveal section-subtitle">TEKNOLOGI & TOOLS</p>
         
         <div className="row align-items-start mx-auto g-5 mb-5" style={{ maxWidth: '1100px' }}>
           
