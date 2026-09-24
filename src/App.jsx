@@ -4,7 +4,6 @@ import './index.css';
 const App = () => {
   const canvasRef = useRef(null);
   
-  // State untuk kontrol Buka/Tutup Menu HP
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const toggleMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
@@ -92,7 +91,7 @@ const App = () => {
     return () => clearInterval(slideInterval);
   }, []);
 
-  // --- LOGIKA MOUSE GLOW & GRADASI LATAR BELAKANG MENYALA ---
+  // --- LOGIKA MESH GRADIENT AURORA MENGKILAU & JELAS BERGERAK ---
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
@@ -107,11 +106,10 @@ const App = () => {
 
     let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
     
-    // Titik trail kursor
+    // Trail kursor
     let trailPoints = [
-      { x: window.innerWidth / 2, y: window.innerHeight / 2, lerp: 0.1, r: 450 },
-      { x: window.innerWidth / 2, y: window.innerHeight / 2, lerp: 0.05, r: 400 },
-      { x: window.innerWidth / 2, y: window.innerHeight / 2, lerp: 0.02, r: 350 }
+      { x: window.innerWidth / 2, y: window.innerHeight / 2, lerp: 0.1, r: 250 },
+      { x: window.innerWidth / 2, y: window.innerHeight / 2, lerp: 0.05, r: 150 }
     ];
 
     let time = 0;
@@ -123,26 +121,52 @@ const App = () => {
     window.addEventListener('mousemove', handleMouseMove);
 
     const animate = () => {
-      time += 0.003;
+      // Kelajuan ditingkatkan agar pergerakan sangat jelas terlihat
+      time += 0.0035; 
       animationFrameId = requestAnimationFrame(animate);
       
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#0f1013'; 
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      const w = canvas.width;
+      const h = canvas.height;
 
+      // 1. Dasar Hitam Pekat
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.fillStyle = '#050505'; 
+      ctx.fillRect(0, 0, w, h);
+
+      // Gunakan mode 'screen' supaya warna lebih menyala dan terang
       ctx.globalCompositeOperation = 'screen'; 
 
-      // Gradasi raksasa yang menyala
+      const maxDim = Math.max(w, h);
+
+      // 2. Aurora Mencolok dengan Pergerakan Luas
       const orbs = [
-        { x: canvas.width * 0.2 + Math.sin(time) * 150, y: canvas.height * 0.3 + Math.cos(time * 0.8) * 100, r: 1400, color: 'rgba(255, 87, 34, 0.35)' }, 
-        { x: canvas.width * 0.8 + Math.cos(time * 1.2) * 200, y: canvas.height * 0.7 + Math.sin(time * 0.9) * 150, r: 1100, color: 'rgba(255, 138, 101, 0.20)' },
-        { x: canvas.width * 0.5 + Math.sin(time * 0.7) * 300, y: canvas.height * 0.5 + Math.cos(time * 1.1) * 200, r: 1000, color: 'rgba(230, 74, 25, 0.15)' }
+        // Oren Terang (Bergerak dari kiri ke kanan)
+        { 
+          x: w * 0.4 + Math.sin(time * 0.8) * (w * 0.4), 
+          y: h * 0.6 + Math.cos(time * 0.6) * (h * 0.3), 
+          r: maxDim * 0.5, 
+          color: 'rgba(255, 87, 34, 0.45)' // Opasiti tinggi
+        },
+        // Ungu Neon (Bergerak berlawanan arah)
+        { 
+          x: w * 0.6 + Math.cos(time * 0.7) * (w * 0.4), 
+          y: h * 0.4 + Math.sin(time * 0.9) * (h * 0.3), 
+          r: maxDim * 0.55, 
+          color: 'rgba(160, 32, 240, 0.4)' 
+        },
+        // Merah Jambu Menyala (Melayang & berputar di kawasan tengah)
+        { 
+          x: w * 0.5 + Math.sin(time * 1.1) * (w * 0.3), 
+          y: h * 0.5 + Math.cos(time * 1.2) * (h * 0.3), 
+          r: maxDim * 0.45, 
+          color: 'rgba(255, 64, 129, 0.35)' 
+        }
       ];
 
       orbs.forEach(orb => {
         const bgGradient = ctx.createRadialGradient(orb.x, orb.y, 0, orb.x, orb.y, orb.r);
         bgGradient.addColorStop(0, orb.color);
-        bgGradient.addColorStop(1, 'rgba(15, 16, 19, 0)');
+        bgGradient.addColorStop(1, 'rgba(5, 5, 5, 0)'); 
 
         ctx.fillStyle = bgGradient;
         ctx.beginPath();
@@ -150,7 +174,7 @@ const App = () => {
         ctx.fill();
       });
 
-      // Mouse Trail
+      // 3. Mouse Trail (Sedikit lebih terang)
       trailPoints.forEach((p, index) => {
         let targetX = index === 0 ? mouse.x : trailPoints[index - 1].x;
         let targetY = index === 0 ? mouse.y : trailPoints[index - 1].y;
@@ -159,10 +183,10 @@ const App = () => {
         p.y += (targetY - p.y) * p.lerp;
 
         const trailGradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
-        const opacity = 0.2 - (index * 0.05); 
+        const opacity = 0.15 - (index * 0.05); 
         
-        trailGradient.addColorStop(0, `rgba(255, 87, 34, ${opacity})`); 
-        trailGradient.addColorStop(1, 'rgba(15, 16, 19, 0)');     
+        trailGradient.addColorStop(0, `rgba(255, 138, 101, ${opacity})`); 
+        trailGradient.addColorStop(1, 'rgba(5, 5, 5, 0)');     
 
         ctx.fillStyle = trailGradient;
         ctx.beginPath();
@@ -235,11 +259,10 @@ const App = () => {
               Merancang Antarmuka yang Hidup, <br className="d-none d-md-block" /> Membangun Web yang <span style={{color: '#FF5722'}}>Tangguh.</span>
             </h1>
             
-            <p className="text-light opacity-75 mb-5 fw-light lh-lg fs-5" style={{maxWidth: '650px'}}>
+            <p className="text-light opacity-75 mb-5 fs-5" style={{maxWidth: '650px', lineHeight: '1.8'}}>
               Halo, saya <strong>Herdi Rizky</strong>. Mahasiswa Sistem Informasi di UNNES sekaligus penggiat UI/UX Design dan Web Development yang berfokus menciptakan pengalaman digital yang intuitif dan berdampak nyata.
             </p>
             
-            {/* Terapkan Class Baru pada Tombol di sini */}
             <div className="d-flex flex-column flex-sm-row gap-3 mt-2 justify-content-center justify-content-lg-start">
               <a href="#projects" className="btn px-4 py-3 rounded-pill fw-bold btn-primary-glow">Lihat Proyek</a>
               <a href="#contact" className="btn px-4 py-3 rounded-pill fw-bold btn-outline-glow">Mari Berkolaborasi</a>
@@ -293,7 +316,6 @@ const App = () => {
       </section>
 
       <section id="skills" className="container pt-5 mt-5 z-1 position-relative">
-        {/* Terapkan Class section-subtitle di sini agar membesar & menyala */}
         <p className="text-center mb-5 reveal section-subtitle">TEKNOLOGI & TOOLS</p>
         
         <div className="row align-items-start mx-auto g-5 mb-5" style={{ maxWidth: '1100px' }}>
@@ -301,22 +323,42 @@ const App = () => {
           <div className="col-12 col-md-6 reveal-left delay-100">
             <h5 className="fw-bold mb-4 opacity-75 text-center text-md-start">Bahasa Pemrograman</h5>
             <div className="skills-wrapper">
-              <span className="skill-pill"><i className="fab fa-js skill-icon" style={{color: '#F7DF1E'}}></i> JavaScript</span>
-              <span className="skill-pill"><i className="fab fa-react skill-icon" style={{color: '#61DAFB'}}></i> React.js</span>
-              <span className="skill-pill full-width"><i className="fab fa-php skill-icon" style={{color: '#777BB4'}}></i> PHP & MySQL</span>
-              <span className="skill-pill"><i className="fab fa-css3-alt skill-icon" style={{color: '#1572B6'}}></i> CSS</span>
-              <span className="skill-pill"><i className="fab fa-html5 skill-icon" style={{color: '#E34F26'}}></i> HTML</span>
+              <span className="skill-pill">
+                <img src="/logo-javascript.png" alt="JavaScript" className="skill-icon-img" /> JavaScript
+              </span>
+              <span className="skill-pill">
+                <img src="/logo-react.png" alt="React.js" className="skill-icon-img" /> React.js
+              </span>
+              <span className="skill-pill full-width">
+                <img src="/logo-php.png" alt="PHP & MySQL" className="skill-icon-img" /> PHP & MySQL
+              </span>
+              <span className="skill-pill">
+                <img src="/logo-css.png" alt="CSS" className="skill-icon-img" /> CSS
+              </span>
+              <span className="skill-pill">
+                <img src="/logo-html.png" alt="HTML" className="skill-icon-img" /> HTML
+              </span>
             </div>
           </div>
 
           <div className="col-12 col-md-6 reveal-right delay-200">
             <h5 className="fw-bold mb-4 opacity-75 text-center text-md-start">Tools & Aplikasi</h5>
             <div className="skills-wrapper">
-              <span className="skill-pill"><i className="fas fa-palette skill-icon" style={{color: '#00C4CC'}}></i> Canva</span>
-              <span className="skill-pill"><i className="fab fa-figma skill-icon" style={{color: '#F24E1E'}}></i> Figma</span>
-              <span className="skill-pill full-width"><i className="fas fa-play-circle skill-icon" style={{color: '#00E5FF'}}></i> Alight Motion</span>
-              <span className="skill-pill"><i className="fas fa-cut skill-icon" style={{color: '#FFFFFF'}}></i> CapCut</span>
-              <span className="skill-pill"><i className="fas fa-camera-retro skill-icon" style={{color: '#31A8FF'}}></i> Lightroom</span>
+              <span className="skill-pill">
+                <img src="/logo-canva.png" alt="Canva" className="skill-icon-img" /> Canva
+              </span>
+              <span className="skill-pill">
+                <img src="/logo-figma.png" alt="Figma" className="skill-icon-img" /> Figma
+              </span>
+              <span className="skill-pill full-width">
+                <img src="/logo-alightmotion.png" alt="Alight Motion" className="skill-icon-img" /> Alight Motion
+              </span>
+              <span className="skill-pill">
+                <img src="/logo-capcut.png" alt="CapCut" className="skill-icon-img" /> CapCut
+              </span>
+              <span className="skill-pill">
+                <img src="/logo-lightroom.png" alt="Lightroom" className="skill-icon-img" /> Lightroom
+              </span>
             </div>
           </div>
           
@@ -328,19 +370,19 @@ const App = () => {
               <h4 className="fw-bold mb-4"><i className="fas fa-laptop-code me-3" style={{color: '#FF5722'}}></i> Kapabilitas Teknis</h4>
               <div className="skill-item">
                 <div className="skill-icon-box"><i className="fas fa-layer-group"></i></div>
-                <div><h6 className="fw-bold mb-1">UI/UX & Prototyping</h6><p className="opacity-50 small mb-0">Merancang wireframe, antarmuka responsif, dan alur pengguna.</p></div>
+                <div><h6 className="fw-bold mb-1">UI/UX & Prototyping</h6><p className="opacity-75 small mb-0">Merancang wireframe, antarmuka responsif, dan alur pengguna.</p></div>
               </div>
               <div className="skill-item">
                 <div className="skill-icon-box"><i className="fas fa-code"></i></div>
-                <div><h6 className="fw-bold mb-1">Web Development</h6><p className="opacity-50 small mb-0">Pengembangan frontend dan integrasi backend database relasional.</p></div>
+                <div><h6 className="fw-bold mb-1">Web Development</h6><p className="opacity-75 small mb-0">Pengembangan frontend dan integrasi backend database relasional.</p></div>
               </div>
               <div className="skill-item">
                 <div className="skill-icon-box"><i className="fas fa-server"></i></div>
-                <div><h6 className="fw-bold mb-1">Web Administration</h6><p className="opacity-50 small mb-0">Pengelolaan domain, cPanel, dan manajemen WordPress.</p></div>
+                <div><h6 className="fw-bold mb-1">Web Administration</h6><p className="opacity-75 small mb-0">Pengelolaan domain, cPanel, dan manajemen WordPress.</p></div>
               </div>
               <div className="skill-item">
                 <div className="skill-icon-box"><i className="fas fa-network-wired"></i></div>
-                <div><h6 className="fw-bold mb-1">Machine Learning Basic</h6><p className="opacity-50 small mb-0">Implementasi algoritma klasifikasi menggunakan Python.</p></div>
+                <div><h6 className="fw-bold mb-1">Machine Learning Basic</h6><p className="opacity-75 small mb-0">Implementasi algoritma klasifikasi menggunakan Python.</p></div>
               </div>
             </div>
           </div>
@@ -350,19 +392,19 @@ const App = () => {
               <h4 className="fw-bold mb-4"><i className="fas fa-user-tie me-3" style={{color: '#FF5722'}}></i> Kapabilitas Personal</h4>
               <div className="skill-item">
                 <div className="skill-icon-box"><i className="fas fa-calendar-check"></i></div>
-                <div><h6 className="fw-bold mb-1">Event Management</h6><p className="opacity-50 small mb-0">Mengoordinasikan agenda dan infrastruktur acara mahasiswa.</p></div>
+                <div><h6 className="fw-bold mb-1">Event Management</h6><p className="opacity-75 small mb-0">Mengoordinasikan agenda dan infrastruktur acara mahasiswa.</p></div>
               </div>
               <div className="skill-item">
                 <div className="skill-icon-box"><i className="fas fa-puzzle-piece"></i></div>
-                <div><h6 className="fw-bold mb-1">Problem Solving</h6><p className="opacity-50 small mb-0">Menganalisis dan memecahkan tantangan teknis (misal: CTF).</p></div>
+                <div><h6 className="fw-bold mb-1">Problem Solving</h6><p className="opacity-75 small mb-0">Menganalisis dan memecahkan tantangan teknis (misal: CTF).</p></div>
               </div>
               <div className="skill-item">
                 <div className="skill-icon-box"><i className="fas fa-comments"></i></div>
-                <div><h6 className="fw-bold mb-1">Komunikasi & Tim</h6><p className="opacity-50 small mb-0">Koordinasi solid di akademik dan organisasi jurnalistik.</p></div>
+                <div><h6 className="fw-bold mb-1">Komunikasi & Tim</h6><p className="opacity-75 small mb-0">Koordinasi solid di akademik dan organisasi jurnalistik.</p></div>
               </div>
               <div className="skill-item">
                 <div className="skill-icon-box"><i className="fas fa-lightbulb"></i></div>
-                <div><h6 className="fw-bold mb-1">Berpikir Kreatif</h6><p className="opacity-50 small mb-0">Mengeksekusi desain grafis dan konten digital tepat sasaran.</p></div>
+                <div><h6 className="fw-bold mb-1">Berpikir Kreatif</h6><p className="opacity-75 small mb-0">Mengeksekusi desain grafis dan konten digital tepat sasaran.</p></div>
               </div>
             </div>
           </div>
@@ -421,21 +463,21 @@ const App = () => {
                 <img src="/mvpcss.png" alt="Sertifikat CTF" className="cert-thumb" />
                 <div>
                   <h6 className="fw-bold mb-1">MVP Panitia Perkap</h6>
-                  <p className="opacity-50 small mb-0">Himpunan Program CSS 2025</p>
+                  <p className="opacity-75 small mb-0">Himpunan Program CSS 2025</p>
                 </div>
               </a>
               <a href="/FILE-SERTIFIKAT-GEMASTIK.pdf" target="_blank" rel="noreferrer" className="cert-card p-3 rounded-4 border-start border-4">
                 <img src="/dicoding.png" alt="Sertifikat GEMASTIK" className="cert-thumb" />
                 <div>
                   <h6 className="fw-bold mb-1">Mulai Pemrograman Dengan C</h6>
-                  <p className="opacity-50 small mb-0">Dicoding 2024 </p>
+                  <p className="opacity-75 small mb-0">Dicoding 2024 </p>
                 </div>
               </a>
               <a href="/FILE-SERTIFIKAT-WEB.pdf" target="_blank" rel="noreferrer" className="cert-card p-3 rounded-4 border-start border-4">
                 <img src="/netacad.png" alt="Sertifikat Web Dev" className="cert-thumb" />
                 <div>
                   <h6 className="fw-bold mb-1">Cyberecurity Essentials</h6>
-                  <p className="opacity-50 small mb-0">Cisco Networking Academy 2026</p>
+                  <p className="opacity-75 small mb-0">Cisco Networking Academy 2026</p>
                 </div>
               </a>
             </div>
