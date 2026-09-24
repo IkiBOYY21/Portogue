@@ -324,19 +324,19 @@ const App = () => {
             <h5 className="fw-bold mb-4 opacity-75 text-center text-md-start">Bahasa Pemrograman</h5>
             <div className="skills-wrapper">
               <span className="skill-pill">
-                <img src="/logo-javascript.png" alt="JavaScript" className="skill-icon-img" /> JavaScript
+                <img src="/java.webp" alt="JavaScript" className="skill-icon-img" /> JavaScript
               </span>
               <span className="skill-pill">
-                <img src="/logo-react.png" alt="React.js" className="skill-icon-img" /> React.js
+                <img src="/React.png" alt="React.js" className="skill-icon-img" /> React.js
               </span>
               <span className="skill-pill full-width">
-                <img src="/logo-php.png" alt="PHP & MySQL" className="skill-icon-img" /> PHP & MySQL
+                <img src="/php.png" alt="PHP & MySQL" className="skill-icon-img" /> PHP & MySQL
               </span>
               <span className="skill-pill">
-                <img src="/logo-css.png" alt="CSS" className="skill-icon-img" /> CSS
+                <img src="/css.png" alt="CSS" className="skill-icon-img" /> CSS
               </span>
               <span className="skill-pill">
-                <img src="/logo-html.png" alt="HTML" className="skill-icon-img" /> HTML
+                <img src="/html.png" alt="HTML" className="skill-icon-img" /> HTML
               </span>
             </div>
           </div>
@@ -345,19 +345,19 @@ const App = () => {
             <h5 className="fw-bold mb-4 opacity-75 text-center text-md-start">Tools & Aplikasi</h5>
             <div className="skills-wrapper">
               <span className="skill-pill">
-                <img src="/logo-canva.png" alt="Canva" className="skill-icon-img" /> Canva
+                <img src="/canva-icon-logo.png" alt="Canva" className="skill-icon-img" /> Canva
               </span>
               <span className="skill-pill">
-                <img src="/logo-figma.png" alt="Figma" className="skill-icon-img" /> Figma
+                <img src="/figma-sign-logo.png" alt="Figma" className="skill-icon-img" /> Figma
               </span>
               <span className="skill-pill full-width">
-                <img src="/logo-alightmotion.png" alt="Alight Motion" className="skill-icon-img" /> Alight Motion
+                <img src="/alightmotion.png" alt="Alight Motion" className="skill-icon-img" /> Alight Motion
               </span>
               <span className="skill-pill">
-                <img src="/logo-capcut.png" alt="CapCut" className="skill-icon-img" /> CapCut
+                <img src="/capcut.png" alt="CapCut" className="skill-icon-img" /> CapCut
               </span>
               <span className="skill-pill">
-                <img src="/logo-lightroom.png" alt="Lightroom" className="skill-icon-img" /> Lightroom
+                <img src="/lr.png" alt="Lightroom" className="skill-icon-img" /> Lightroom
               </span>
             </div>
           </div>
