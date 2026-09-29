@@ -416,7 +416,7 @@ const App = () => {
         
         <div className="bento-grid">
           <div className="bento-item bento-large reveal delay-100">
-            <img src="/proyek1.png" alt="Proyek 1" className="bento-img" onError={(e) => { e.target.style.display = 'none'; }} />
+            <img src="/numanke.png" alt="Proyek 1" className="bento-img" onError={(e) => { e.target.style.display = 'none'; }} />
             <span className="bento-tag">UI/UX Design</span>
             <div className="bento-content mt-4">
               <h3 className="fw-bold fs-3 mb-3">Official Numanke Web</h3>
