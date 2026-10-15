@@ -76,10 +76,10 @@ const App = () => {
   }, [isDragging]);
 
   const orgSlides = [
-    { id: 1, img: '/css.jpeg', title: 'Rapat Kerja Tahunan', desc: 'Merumuskan dan mendiskusikan program kerja BP2M Unnes.' },
-    { id: 2, img: '/interface.jpeg', title: 'Pelatihan Jurnalistik', desc: 'Meningkatkan keterampilan peliputan dan penulisan media.' },
-    { id: 3, img: '/studibanding.jpeg', title: 'Liputan Lapangan', desc: 'Melakukan reportase acara dan dinamika kampus secara langsung.' },
-    { id: 4, img: '/hima.jpeg', title: 'Malam Keakraban', desc: 'Membangun solidaritas dan koneksi antar anggota organisasi.' }
+    { id: 1, img: '/css.jpeg', title: 'Event lomba jurusan', desc: 'Berperan dalam mengorganisir kompetisi tingkat jurusan yang bertujuan untuk mewadahi minat, bakat, serta kreativitas mahasiswa di bidang akademik maupun non-akademik.' },
+    { id: 2, img: '/interface.jpeg', title: 'Ospek Jurusan', desc: 'Terlibat aktif dalam kepanitiaan orientasi mahasiswa baru, bertugas untuk mengenalkan budaya akademik, nilai-nilai jurusan, serta membangun karakter adaptif pada mahasiswa baru.' },
+    { id: 3, img: '/studibanding.jpeg', title: 'Studi Banding (UGM)', desc: 'Melaksanakan kunjungan komparatif dan diskusi program kerja bersama organisasi kemahasiswaan di Universitas Gadjah Mada (UGM) untuk perluasan wawasan dan peningkatan kualitas keorganisasian.' },
+    { id: 4, img: '/hima.jpeg', title: 'Anggota Divisi Hima ( Internal )', desc: 'Menjadi pengurus aktif Himpunan Mahasiswa divisi Internal, bertanggung jawab dalam menjaga solidaritas pengurus, minat bakat, menampung aspirasi mahasiswa, dan mengelola kegiatan internal jurusan.' }
   ];
 
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -420,7 +420,7 @@ const App = () => {
             <span className="bento-tag">UI/UX Design</span>
             <div className="bento-content mt-4">
               <h3 className="fw-bold fs-3 mb-3">Official Numanke Web</h3>
-              <p className="opacity-75 mb-0 lh-lg">Perancangan antarmuka aplikasi berbasis AI untuk membantu perencanaan konten digital bisnis skala kecil. Fokus pada alur pengguna yang intuitif.</p>
+              <p className="opacity-75 mb-0 lh-lg">Perancangan antarmuka (UI/UX) website untuk bisnis kuliner Numanke. Desain ini menonjolkan visual produk unggulan seperti Ayam Brongot dengan tata letak responsif dan navigasi yang intuitif untuk mempermudah pengalaman pemesanan pelanggan.</p>
             </div>
           </div>
 
@@ -438,7 +438,7 @@ const App = () => {
             <span className="bento-tag">Machine Learning</span>
             <div className="bento-content mt-4">
               <h4 className="fw-bold mb-2">Laba Pintar</h4>
-              <p className="opacity-75 mb-0">Riset perbandingan performa algoritma Naive Bayes, Decision Tree, dan Random Forest menggunakan Python.</p>
+              <p className="opacity-75 mb-0">Sistem cerdas berbasis machine learning yang dirancang khusus sebagai solusi bagi UMKM. Sistem ini bertujuan untuk membantu pelaku usaha dalam menganalisis data, memprediksi tren performa, dan mengoptimalkan keuntungan (laba) bisnis.</p>
             </div>
           </div>
 
@@ -447,7 +447,7 @@ const App = () => {
              <span className="bento-tag" style={{background: '#333', color: '#fff'}}>Frontend</span>
              <div className="bento-content mt-4">
                 <h4 className="fw-bold mb-2">Draft Pick - Mobile Legend</h4>
-                <p className="opacity-75 mb-0">Pengembangan website portofolio interaktif dengan animasi HTML5 Canvas dan arsitektur komponen React yang responsif.</p>
+                <p className="opacity-75 mb-0">Pengembangan antarmuka frontend interaktif yang mensimulasikan sistem draft pick (pemilihan dan pelarangan hero) dari game Mobile Legends. Berfokus pada logika interaktivitas dan replikasi tata letak visual yang dinamis antar dua tim.</p>
              </div>
           </div>
         </div>
