@@ -7,6 +7,30 @@ const App = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const toggleMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
+  // State untuk efek interaktif 3D Tilt pada foto
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+
+  const handleMouseMoveTilt = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left; 
+    const y = e.clientY - rect.top;  
+    
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    
+    // Hitung rotasi (Maksimal 15 derajat)
+    const rotateX = ((y - centerY) / centerY) * -15; 
+    const rotateY = ((x - centerX) / centerX) * 15;
+    
+    setTilt({ x: rotateX, y: rotateY });
+  };
+
+  const handleMouseLeaveTilt = () => {
+    // Kembali ke posisi semula saat mouse keluar dari area
+    setTilt({ x: 0, y: 0 });
+  };
+
+  // Animasi reveal saat scroll
   useEffect(() => {
     const reveals = document.querySelectorAll(".reveal, .reveal-left, .reveal-right");
     const revealOptions = { threshold: 0.15, rootMargin: "0px 0px -50px 0px" };
@@ -23,58 +47,7 @@ const App = () => {
     return () => reveals.forEach(reveal => revealOnScroll.unobserve(reveal));
   }, []);
 
-  const [cocardPos, setCocardPos] = useState({ x: 0, y: 0, rotate: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const startPos = useRef({ x: 0, y: 0 });
-
-  const handleMouseDown = (e) => {
-    setIsDragging(true);
-    startPos.current = { x: e.clientX - cocardPos.x, y: e.clientY - cocardPos.y };
-  };
-
-  const handleTouchStart = (e) => {
-    setIsDragging(true);
-    startPos.current = { x: e.touches[0].clientX - cocardPos.x, y: e.touches[0].clientY - cocardPos.y };
-  };
-
-  useEffect(() => {
-    const handleMove = (clientX, clientY) => {
-      if (!isDragging) return;
-      const x = clientX - startPos.current.x;
-      const y = clientY - startPos.current.y;
-      const clampedY = Math.max(-60, y); 
-      const rotate = x * 0.05; 
-      setCocardPos({ x, y: clampedY, rotate });
-    };
-
-    const handleMouseMove = (e) => handleMove(e.clientX, e.clientY);
-    const handleTouchMove = (e) => {
-      if (!isDragging) return;
-      e.preventDefault(); 
-      handleMove(e.touches[0].clientX, e.touches[0].clientY);
-    };
-
-    const handleEnd = () => {
-      if (isDragging) {
-        setIsDragging(false);
-        setCocardPos({ x: 0, y: 0, rotate: 0 });
-      }
-    };
-
-    if (isDragging) {
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseup', handleEnd);
-      window.addEventListener('touchmove', handleTouchMove, { passive: false });
-      window.addEventListener('touchend', handleEnd);
-    }
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleEnd);
-      window.removeEventListener('touchmove', handleTouchMove);
-      window.removeEventListener('touchend', handleEnd);
-    };
-  }, [isDragging]);
-
+  // Data slide organisasi
   const orgSlides = [
     { id: 1, img: '/css.jpeg', title: 'Event lomba jurusan', desc: 'Berperan dalam mengorganisir kompetisi tingkat jurusan yang bertujuan untuk mewadahi minat, bakat, serta kreativitas mahasiswa di bidang akademik maupun non-akademik.' },
     { id: 2, img: '/interface.jpeg', title: 'Ospek Jurusan', desc: 'Terlibat aktif dalam kepanitiaan orientasi mahasiswa baru, bertugas untuk mengenalkan budaya akademik, nilai-nilai jurusan, serta membangun karakter adaptif pada mahasiswa baru.' },
@@ -106,7 +79,6 @@ const App = () => {
 
     let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
     
-    // Trail kursor
     let trailPoints = [
       { x: window.innerWidth / 2, y: window.innerHeight / 2, lerp: 0.1, r: 250 },
       { x: window.innerWidth / 2, y: window.innerHeight / 2, lerp: 0.05, r: 150 }
@@ -121,46 +93,23 @@ const App = () => {
     window.addEventListener('mousemove', handleMouseMove);
 
     const animate = () => {
-      // Kelajuan ditingkatkan agar pergerakan sangat jelas terlihat
       time += 0.0035; 
       animationFrameId = requestAnimationFrame(animate);
       
       const w = canvas.width;
       const h = canvas.height;
 
-      // 1. Dasar Hitam Pekat
       ctx.globalCompositeOperation = 'source-over';
       ctx.fillStyle = '#050505'; 
       ctx.fillRect(0, 0, w, h);
 
-      // Gunakan mode 'screen' supaya warna lebih menyala dan terang
       ctx.globalCompositeOperation = 'screen'; 
-
       const maxDim = Math.max(w, h);
 
-      // 2. Aurora Mencolok dengan Pergerakan Luas
       const orbs = [
-        // Oren Terang (Bergerak dari kiri ke kanan)
-        { 
-          x: w * 0.4 + Math.sin(time * 0.8) * (w * 0.4), 
-          y: h * 0.6 + Math.cos(time * 0.6) * (h * 0.3), 
-          r: maxDim * 0.5, 
-          color: 'rgba(255, 87, 34, 0.45)' // Opasiti tinggi
-        },
-        // Ungu Neon (Bergerak berlawanan arah)
-        { 
-          x: w * 0.6 + Math.cos(time * 0.7) * (w * 0.4), 
-          y: h * 0.4 + Math.sin(time * 0.9) * (h * 0.3), 
-          r: maxDim * 0.55, 
-          color: 'rgba(160, 32, 240, 0.4)' 
-        },
-        // Merah Jambu Menyala (Melayang & berputar di kawasan tengah)
-        { 
-          x: w * 0.5 + Math.sin(time * 1.1) * (w * 0.3), 
-          y: h * 0.5 + Math.cos(time * 1.2) * (h * 0.3), 
-          r: maxDim * 0.45, 
-          color: 'rgba(255, 64, 129, 0.35)' 
-        }
+        { x: w * 0.4 + Math.sin(time * 0.8) * (w * 0.4), y: h * 0.6 + Math.cos(time * 0.6) * (h * 0.3), r: maxDim * 0.5, color: 'rgba(255, 87, 34, 0.45)' },
+        { x: w * 0.6 + Math.cos(time * 0.7) * (w * 0.4), y: h * 0.4 + Math.sin(time * 0.9) * (h * 0.3), r: maxDim * 0.55, color: 'rgba(160, 32, 240, 0.4)' },
+        { x: w * 0.5 + Math.sin(time * 1.1) * (w * 0.3), y: h * 0.5 + Math.cos(time * 1.2) * (h * 0.3), r: maxDim * 0.45, color: 'rgba(255, 64, 129, 0.35)' }
       ];
 
       orbs.forEach(orb => {
@@ -174,7 +123,6 @@ const App = () => {
         ctx.fill();
       });
 
-      // 3. Mouse Trail (Sedikit lebih terang)
       trailPoints.forEach((p, index) => {
         let targetX = index === 0 ? mouse.x : trailPoints[index - 1].x;
         let targetY = index === 0 ? mouse.y : trailPoints[index - 1].y;
@@ -237,7 +185,7 @@ const App = () => {
               <p className="opacity-75 small mb-3 fw-bold letter-spacing-1">HUBUNGI SAYA</p>
               <div className="d-flex justify-content-center gap-4">
                 <a href="https://www.instagram.com/herdirzky" target="_blank" rel="noreferrer" className="mobile-social-icon"><i className="fab fa-instagram"></i></a>
-                <a href="https://www.linkedin.com/in/herdi-rizky" target="_blank" rel="noreferrer" className="mobile-social-icon"><i className="fab fa-linkedin-in"></i></a>
+                <a href="https://www.linkedin.com/in/herdi-rizky-a33349321" target="_blank" rel="noreferrer" className="mobile-social-icon"><i className="fab fa-linkedin-in"></i></a>
                 <a href="https://github.com/IkiBOYY21" target="_blank" rel="noreferrer" className="mobile-social-icon"><i className="fab fa-github"></i></a>
                 <a href="https://wa.me/6281284180949" target="_blank" rel="noreferrer" className="mobile-social-icon"><i className="fab fa-whatsapp"></i></a>
               </div>
@@ -269,49 +217,72 @@ const App = () => {
             </div>
           </div>
           
-          <div className="col-12 col-lg-4 position-relative z-1 mb-5 mb-lg-0 d-flex justify-content-center justify-content-lg-end">
-            <div className="cocard-container w-100">
-              
-              <svg style={{ position: 'absolute', top: '0px', left: '50%', transform: 'translateX(-50%)', width: '200px', height: '100%', overflow: 'visible', zIndex: 1, pointerEvents: 'none' }}>
-                <g transform="translate(100, 0)">
-                  <defs>
-                     <pattern id="lanyard-pattern" width="40" height="40" patternUnits="userSpaceOnUse" patternTransform="rotate(15)">
-                         <rect width="40" height="40" fill="#111" />
-                         <path d="M 0 10 Q 10 20 20 10 T 40 10" stroke="#FF5722" strokeWidth="6" fill="none" />
-                         <path d="M 0 30 Q 10 40 20 30 T 40 30" stroke="#FF8A65" strokeWidth="2" fill="none" />
-                     </pattern>
-                     <radialGradient id="rivet-grad" cx="30%" cy="30%">
-                         <stop offset="0%" stopColor="#888" />
-                         <stop offset="100%" stopColor="#111" />
-                     </radialGradient>
-                  </defs>
-                  
-                  <path d={`M 0 -1500 Q ${cocardPos.x * 0.4} ${cocardPos.y - 400} ${cocardPos.x} ${cocardPos.y + 80}`} stroke="url(#lanyard-pattern)" strokeWidth="35" fill="none" strokeLinecap="square" />
-                  <circle cx={cocardPos.x} cy={cocardPos.y + 55} r="6" fill="url(#rivet-grad)" stroke="#000" strokeWidth="1" />
-                </g>
-              </svg>
+          {/* BAGIAN FOTO INTERAKTIF 3D TILT */}
+          <div className="col-12 col-lg-4 position-relative z-1 mb-5 mb-lg-0 d-flex justify-content-center align-items-center" style={{ minHeight: '450px' }}>
+            
+            {/* Lingkaran cahaya yang berdenyut */}
+            <div className="glow-circle position-absolute pulse-glow" style={{
+              top: '50%', 
+              left: '50%', 
+              width: '320px', 
+              height: '320px', 
+              background: 'radial-gradient(circle, rgba(255,87,34,0.4) 0%, rgba(5,5,5,0) 70%)', 
+              borderRadius: '50%', 
+              zIndex: 0
+            }}></div>
+            
+            {/* Wrapper interaktif yang bereaksi terhadap mouse */}
+            <div 
+              className="position-relative floating-photo"
+              onMouseMove={handleMouseMoveTilt}
+              onMouseLeave={handleMouseLeaveTilt}
+              style={{ 
+                zIndex: 5, 
+                perspective: '1000px', 
+                cursor: 'pointer' 
+              }}
+            >
+              <img 
+                src="/profil-herdi.png" 
+                alt="Foto Herdi" 
+                className="img-fluid" 
+                style={{ 
+                  maxHeight: '480px', 
+                  filter: 'drop-shadow(0 20px 25px rgba(0,0,0,0.7))', 
+                  objectFit: 'contain',
+                  transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+                  transition: 'transform 0.1s ease-out'
+                }} 
+              />
 
-              <div 
-                className={`cocard-wrapper ${isDragging ? 'dragging' : 'snap-back'}`}
-                onMouseDown={handleMouseDown} onTouchStart={handleTouchStart}
-                style={{ transform: `translate(${cocardPos.x}px, ${cocardPos.y}px) rotate(${cocardPos.rotate}deg)` }}
-              >
-                <div className="cocard-d-ring"></div>
-                <div className="cocard-swivel"></div>
-                <div className="cocard-hook"></div>
-                
-                <div className="cocard-body">
-                  <div className="cocard-header">Mahasiswa</div>
-                  <img src="/profil-herdi.jpeg" alt="Foto Herdi" className="cocard-photo" />
-                  <h3 className="cocard-name">Herdi Rizky G.</h3>
-                  <p className="cocard-role">S1 Sistem Informasi</p>
-                  <div className="cocard-barcode"></div>
-                </div>
+              {/* Lencana Nama - Diperbarui sesuai permintaan */}
+              <div className="position-absolute glass p-2 px-3 rounded-4 floating-card-1 d-flex align-items-center gap-2 shadow-lg" 
+                   style={{ 
+                     top: '15%', left: '-10%', zIndex: 10, border: '1px solid rgba(255,255,255,0.1)',
+                     transform: `translateZ(30px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+                     transition: 'transform 0.1s ease-out'
+                   }}>
+                    <span className="text-white fw-bold small">Herdi Rizky G.</span>
               </div>
 
+              {/* Kartu Code Snippet */}
+              <div className="position-absolute glass p-3 rounded-4 floating-card-2 shadow-lg text-start" 
+                   style={{ 
+                     bottom: '10%', right: '-20%', zIndex: 10, border: '1px solid rgba(255,255,255,0.1)', minWidth: '160px',
+                     transform: `translateZ(50px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+                     transition: 'transform 0.1s ease-out'
+                   }}>
+                <small className="fw-bold d-block mb-2" style={{color: '#FF5722'}}>&lt;/&gt; Status</small>
+                <div className="font-monospace small" style={{ fontSize: '0.75rem', lineHeight: '1.6' }}>
+                  <span style={{color: '#c678dd'}}>const</span> <span style={{color: '#e5c07b'}}>fuel</span> = <span style={{color: '#98c379'}}>"Kopi"</span>;<br/>
+                  <span style={{color: '#c678dd'}}>while</span> (<span style={{color: '#e5c07b'}}>fuel</span>) {'{'}<br/>
+                  &nbsp;&nbsp;<span style={{color: '#61afef'}}>buildWeb</span>();<br/>
+                  {'}'}
+                </div>
+              </div>
             </div>
-          </div>
 
+          </div>
         </div>
       </section>
 
@@ -515,7 +486,7 @@ const App = () => {
           </p>
           <div className="d-flex justify-content-center gap-4 flex-wrap">
             <a href="https://www.instagram.com/herdirzky" target="_blank" rel="noreferrer" className="social-icon"><i className="fab fa-instagram"></i></a>
-            <a href="https://www.linkedin.com/in/herdi-rizky" target="_blank" rel="noreferrer" className="social-icon"><i className="fab fa-linkedin-in"></i></a>
+            <a href="https://www.linkedin.com/in/herdi-rizky-a33349321" target="_blank" rel="noreferrer" className="social-icon"><i className="fab fa-linkedin-in"></i></a>
             <a href="https://github.com/IkiBOYY21" target="_blank" rel="noreferrer" className="social-icon"><i className="fab fa-github"></i></a>
             <a href="mailto:herdirizky84@gmail.com" className="social-icon"><i className="fas fa-envelope"></i></a>
             <a href="https://wa.me/6281284180949" target="_blank" rel="noreferrer" className="social-icon"><i className="fab fa-whatsapp"></i></a>
